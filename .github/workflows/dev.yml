@@ -8,9 +8,9 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Manual trigger
-  schedule:
-    - cron: '0 2 * * *' # Runs daily at 2 AM UTC
+  # workflow_dispatch: # Manual trigger
+  # schedule:
+    # - cron: '0 2 * * *' # Runs daily at 2 AM UTC
 
 jobs:
   api-tests:
@@ -31,7 +31,7 @@ jobs:
       - name: 🔄 Run Postman Tests
         run: |
           newman run Dummy_collection.json \
-            -e your_environment.json \
+            # -e your_environment.json \
             --reporters cli,htmlextra \
             --reporter-htmlextra-export test-report.html
 
