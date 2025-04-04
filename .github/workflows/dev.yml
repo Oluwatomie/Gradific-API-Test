@@ -1,0 +1,58 @@
+name: API Tests with Postman
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Manual trigger
+  schedule:
+    - cron: '0 2 * * *' # Runs daily at 2 AM UTC
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🛠 Set Up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 📦 Install Dependencies
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: 🔄 Run Postman Tests
+        run: |
+          newman run your_collection.json \
+            -e your_environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export test-report.html
+
+      - name: 📤 Upload Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: Postman-Test-Report
+          path: test-report.html
+
+      - name: ✅ Ensure Tests Passed
+        run: |
+          if [ ! -f test-report.html ]; then
+            echo "❌ Test report missing. Failing the build!"
+            exit 1
+          fi
+
+      - name: 📢 Notify on Failure (Optional)
+        if: failure()
+        run: echo "❌ API tests failed! Check logs & reports."
+
+      - name: 🚀 Deploy if Tests Pass (Optional)
+        if: success()
+        run: echo "✅ Tests passed. Ready for deployment!"
+
