@@ -30,7 +30,7 @@ jobs:
 
       - name: 🔄 Run Postman Tests
         run: |
-          newman run your_collection.json \
+          newman run Dummy_collection.json \
             -e your_environment.json \
             --reporters cli,htmlextra \
             --reporter-htmlextra-export test-report.html
